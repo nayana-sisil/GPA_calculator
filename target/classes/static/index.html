@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SLIIT GPA Calculator - Year 1 Semester 2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        *, *::before, *::after {
+          box-sizing: border-box;
+        }
+
+        html, body {
+          margin: 0;
+          padding: 0;
+          height: 100vh;
+          font-family: 'Poppins', sans-serif;
+          background: linear-gradient(135deg, #c7d2fe, #e0e7ff);
+          color: #0f172a;
+        }
+
+        body {
+          display: flex;
+          flex-direction: column;
+          padding: 12px 20px 16px 20px;
+          gap: 8px;
+        }
+
+        header {
+          flex-shrink: 0;
+          font-weight: 800;
+          font-size: 1.35rem;
+          letter-spacing: 0.12em;
+          color: #1e1b4b;
+          text-align: center;
+          text-shadow: 0 2px 5px rgba(0,0,0,0.15);
+          margin-bottom: 8px;
+          text-transform: uppercase;
+        }
+
+        main {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          width: 100%;
+          max-width: 1050px;
+          margin: 0 auto;
+          flex-grow: 1;
+          align-items: start;
+        }
+
+        section {
+          background: white;
+          border-radius: 14px;
+          box-shadow: 0 10px 24px rgba(0,0,0,0.1);
+          padding: 16px 20px;
+          display: flex;
+          flex-direction: column;
+        }
+
+        #grading-scale h2,
+        #gpa-input h2 {
+          color: #4f46e5;
+          font-weight: 700;
+          margin: 0 0 12px 0;
+          letter-spacing: 0.07em;
+          font-size: 1.15rem;
+          text-align: center;
+          user-select: none;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0 6px;
+          font-size: 0.8rem;
+          table-layout: fixed;
+        }
+
+        thead th {
+          background: #6366f1;
+          color: white;
+          font-weight: 700;
+          padding: 6px 8px;
+          border-radius: 6px;
+          text-align: center;
+          letter-spacing: 0.02em;
+        }
+
+        tbody td {
+          background: #e0e7ff;
+          color: #3730a3;
+          font-weight: 600;
+          padding: 5px 6px;
+          border-radius: 6px;
+          text-align: center;
+          cursor: default;
+        }
+
+        tbody tr:hover td {
+          background: #c7d2fe;
+        }
+
+        td[data-tooltip] {
+          position: relative;
+        }
+
+        td[data-tooltip]::after {
+          content: attr(data-tooltip);
+          position: absolute;
+          bottom: 130%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #1e293b;
+          color: #f1f5f9;
+          padding: 4px 8px;
+          border-radius: 8px;
+          font-size: 0.7rem;
+          white-space: nowrap;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.25s ease;
+        }
+
+        td[data-tooltip]:hover::after {
+          opacity: 1;
+        }
+
+        #gpa-input p {
+          font-size: 0.75rem;
+          color: #475569;
+          margin: 0 0 14px 0;
+          text-align: center;
+          letter-spacing: 0.03em;
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        label {
+          font-weight: 700;
+          font-size: 0.85rem;
+          margin-bottom: 3px;
+          color: #1e293b;
+        }
+
+        select {
+          font-weight: 600;
+          font-size: 0.85rem;
+          padding: 8px 12px;
+          border-radius: 12px;
+          border: 2px solid #cbd5e1;
+          background: #f9fafb;
+          color: #334155;
+          cursor: pointer;
+          transition: border-color 0.3s ease, box-shadow 0.3s ease;
+          background-image:
+            linear-gradient(45deg, transparent 50%, #6366f1 50%),
+            linear-gradient(135deg, #6366f1 50%, transparent 50%),
+            linear-gradient(to right, #cbd5e1, #cbd5e1);
+          background-position:
+            calc(100% - 20px) calc(1em + 1.5px),
+            calc(100% - 15px) calc(1em + 1.5px),
+            calc(100% - 25px) 0.8em;
+          background-size: 5px 5px, 5px 5px, 1px 1.5em;
+          background-repeat: no-repeat;
+        }
+
+        select:hover, select:focus {
+          border-color: #4f46e5;
+          box-shadow: 0 0 14px #6366f1aa;
+          background-color: #eef2ff;
+        }
+
+        button {
+          margin-top: 12px;
+          background: linear-gradient(90deg, #6366f1, #818cf8);
+          color: white;
+          font-weight: 700;
+          font-size: 1rem;
+          padding: 10px 0;
+          border: none;
+          border-radius: 16px;
+          cursor: pointer;
+          box-shadow: 0 7px 20px rgb(99 102 241 / 0.4);
+          transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.15s ease;
+          width: 100%;
+          max-width: 280px;
+          align-self: center;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+
+        button:hover {
+          background: linear-gradient(90deg, #4f46e5, #6366f1);
+          box-shadow: 0 12px 32px rgb(99 102 241 / 0.6);
+          transform: translateY(-1.5px);
+        }
+
+        button:active {
+          background: linear-gradient(90deg, #4338ca, #4f46e5);
+          box-shadow: 0 5px 14px rgb(79 70 229 / 0.6);
+          transform: translateY(1px);
+        }
+
+        #result {
+          margin-top: 14px;
+          font-weight: 800;
+          font-size: 1.2rem;
+          color: #4f46e5;
+          text-align: center;
+          min-height: 36px;
+          background: #e0e7ff;
+          padding: 10px 14px;
+          border-radius: 16px;
+          box-shadow: 0 0 18px #c7d2feaa;
+          word-break: break-word;
+          line-height: 1.2;
+        }
+
+        #confetti-canvas {
+          pointer-events: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          z-index: 9999;
+          display: none;
+        }
+
+        @media (max-width: 900px) {
+          main {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            gap: 16px;
+          }
+          button {
+            max-width: 100%;
+          }
+        }
+    </style>
+</head>
+<body>
+<header>SLIIT GPA CALCULATOR FOR YEAR 1 SEMESTER 2 STUDENTS</header>
+<main>
+    <section id="grading-scale">
+        <h2>Grading Scale</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Grade</th><th>GPA</th><th>Marks (%)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr><td data-tooltip="GPA: 4.0, Marks: 90-100">A+</td><td>4.0</td><td>90-100</td></tr>
+            <tr><td data-tooltip="GPA: 4.0, Marks: 80-89">A</td><td>4.0</td><td>80-89</td></tr>
+            <tr><td data-tooltip="GPA: 3.7, Marks: 75-79">A-</td><td>3.7</td><td>75-79</td></tr>
+            <tr><td data-tooltip="GPA: 3.3, Marks: 70-74">B+</td><td>3.3</td><td>70-74</td></tr>
+            <tr><td data-tooltip="GPA: 3.0, Marks: 65-69">B</td><td>3.0</td><td>65-69</td></tr>
+            <tr><td data-tooltip="GPA: 2.7, Marks: 60-64">B-</td><td>2.7</td><td>60-64</td></tr>
+            <tr><td data-tooltip="GPA: 2.3, Marks: 55-59">C+</td><td>2.3</td><td>55-59</td></tr>
+            <tr><td data-tooltip="GPA: 2.0, Marks: 45-54">C</td><td>2.0</td><td>45-54</td></tr>
+            <tr><td data-tooltip="GPA: 1.7, Marks: 40-44">C-</td><td>1.7</td><td>40-44</td></tr>
+            <tr><td data-tooltip="GPA: 1.3, Marks: 35-39">D+</td><td>1.3</td><td>35-39</td></tr>
+            <tr><td data-tooltip="GPA: 1.0, Marks: 30-34">D</td><td>1.0</td><td>30-34</td></tr>
+            <tr><td data-tooltip="GPA: 0.0, Marks: 0-29">E</td><td>0.0</td><td>0-29</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="gpa-input">
+        <h2>Enter Your Grades</h2>
+        <p>Select your grade for each course below</p>
+        <form id="gradeForm">
+            <label for="oop-select">Object Oriented Programming</label>
+            <select name="Object Oriented Programming" id="oop-select"></select>
+
+            <label for="dm-select">Discrete Mathematics</label>
+            <select name="Discrete Mathematics" id="dm-select"></select>
+
+            <label for="tw-select">Technical Writing</label>
+            <select name="Technical Writing" id="tw-select"></select>
+
+            <label for="ds-select">Data Structures & Algorithms</label>
+            <select name="Data Structures & Algorithms" id="ds-select"></select>
+
+            <button type="submit">Calculate GPA</button>
+        </form>
+        <div id="result"></div>
+    </section>
+</main>
+
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+    const grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "E"];
+    document.querySelectorAll("select").forEach(sel => {
+      sel.innerHTML = '<option value="" disabled selected>Select Grade</option>';
+      grades.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        sel.appendChild(opt);
+      });
+    });
+
+    const gradeToGPA = {
+      "A+":4.0, "A":4.0, "A-":3.7,
+      "B+":3.3, "B":3.0, "B-":2.7,
+      "C+":2.3, "C":2.0, "C-":1.7,
+      "D+":1.3, "D":1.0, "E":0.0
+    };
+
+    const creditsPerCourse = 4;
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    let confettiElements = [];
+    let confettiActive = false;
+
+    function setupCanvas() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', setupCanvas);
+    setupCanvas();
+
+    function randomRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function ConfettiParticle() {
+      this.x = randomRange(0, confettiCanvas.width);
+      this.y = randomRange(-confettiCanvas.height, 0);
+      this.size = randomRange(6, 10);
+      this.speed = randomRange(2, 5);
+      this.angle = randomRange(0, 2 * Math.PI);
+      this.spin = randomRange(0.01, 0.03);
+      this.color = `hsl(${randomRange(220, 260)}, 80%, 60%)`;
+      this.shape = Math.random() > 0.5 ? 'rect' : 'circle';
+    }
+
+    ConfettiParticle.prototype.update = function() {
+      this.y += this.speed;
+      this.angle += this.spin;
+      if (this.y > confettiCanvas.height) {
+        this.y = -this.size;
+        this.x = randomRange(0, confettiCanvas.width);
+      }
+    };
+
+    ConfettiParticle.prototype.draw = function() {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.angle);
+      ctx.fillStyle = this.color;
+      if(this.shape === 'rect') {
+        ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size/2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    };
+
+    function createConfetti(count=100) {
+      confettiElements = [];
+      for(let i=0; i<count; i++) {
+        confettiElements.push(new ConfettiParticle());
+      }
+    }
+
+    function renderConfetti() {
+      if(!confettiActive) return;
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confettiElements.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(renderConfetti);
+    }
+
+    function startConfetti() {
+      confettiCanvas.style.display = 'block';
+      confettiActive = true;
+      createConfetti();
+      renderConfetti();
+      setTimeout(() => {
+        confettiActive = false;
+        confettiCanvas.style.display = 'none';
+        ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }, 4000);
+    }
+
+    const form = document.getElementById('gradeForm');
+    const resultEl = document.getElementById('result');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const oop = form['Object Oriented Programming'].value;
+      const dm = form['Discrete Mathematics'].value;
+      const tw = form['Technical Writing'].value;
+      const ds = form['Data Structures & Algorithms'].value;
+
+      if (!oop || !dm || !tw || !ds) {
+        resultEl.textContent = "⚠️ Please select grades for all courses.";
+        resultEl.style.color = "#dc2626";
+        return;
+      }
+
+      const gpas = [oop, dm, tw, ds].map(g => gradeToGPA[g]);
+      const totalCredits = creditsPerCourse * gpas.length;
+      const weightedSum = gpas.reduce((acc, gpa) => acc + gpa * creditsPerCourse, 0);
+      const gpaTotal = weightedSum / totalCredits;
+
+      if (gpaTotal >= 3.7) {
+        resultEl.innerHTML = `🎉 GPA: <strong>${gpaTotal.toFixed(2)}</strong><br><span style="color:#facc15;">Congratulations! You're on the Dean's List! 🎓</span>`;
+        resultEl.style.color = "#4f46e5";
+        startConfetti();
+      } else {
+        resultEl.innerHTML = `GPA: <strong>${gpaTotal.toFixed(2)}</strong>`;
+        resultEl.style.color = "#4f46e5";
+      }
+    });
+</script>
+</body>
+</html>
